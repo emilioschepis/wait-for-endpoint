@@ -11,23 +11,6 @@ async function delay(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-async function request(url: string, method: string, expectedStatus: number, interval: number): Promise<void> {
-  const client = new http.HttpClient();
-
-  while (true) {
-    try {
-      const response = await client.request(method, url, null, {});
-      const status = response.message.statusCode;
-
-      if (status === expectedStatus) return;
-
-      await delay(interval);
-    } catch (_) {
-      continue;
-    }
-  }
-}
-
 async function main() {
   try {
     const url = getInput("url");
@@ -41,15 +24,25 @@ async function main() {
       return;
     }
 
-    const requestPromise = request(url, method, expectedStatus, interval);
-    const timeoutTimer = new Promise((resolve) =>
-      setTimeout(() => {
-        core.setFailed("Waiting exceeded timeout.");
-        resolve(null);
-      }, timeout)
-    );
+    const client = new http.HttpClient();
+    const startTime = new Date().getTime();
 
-    return Promise.race([requestPromise, timeoutTimer]);
+    while (new Date().getTime() - startTime < timeout) {
+      try {
+        const response = await client.request(method, url, null, {});
+        const status = response.message.statusCode;
+
+        if (status === expectedStatus) {
+          return;
+        } else {
+          await delay(interval);
+        }
+      } catch {
+        await delay(interval);
+      }
+    }
+
+    core.setFailed("Waiting exceeded timeout.");
   } catch (error) {
     core.setFailed(error.message);
   }

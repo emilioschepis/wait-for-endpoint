@@ -1552,23 +1552,6 @@ function delay(ms) {
         return new Promise((resolve) => setTimeout(resolve, ms));
     });
 }
-function request(url, method, expectedStatus, interval) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const client = new _actions_http_client__WEBPACK_IMPORTED_MODULE_1__/* .HttpClient */ .eN();
-        while (true) {
-            try {
-                const response = yield client.request(method, url, null, {});
-                const status = response.message.statusCode;
-                if (status === expectedStatus)
-                    return;
-                yield delay(interval);
-            }
-            catch (_) {
-                continue;
-            }
-        }
-    });
-}
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -1581,12 +1564,24 @@ function main() {
                 _actions_core__WEBPACK_IMPORTED_MODULE_0__.setFailed("Specify a valid HTTP method.");
                 return;
             }
-            const requestPromise = request(url, method, expectedStatus, interval);
-            const timeoutTimer = new Promise((resolve) => setTimeout(() => {
-                _actions_core__WEBPACK_IMPORTED_MODULE_0__.setFailed("Waiting exceeded timeout.");
-                resolve(null);
-            }, timeout));
-            return Promise.race([requestPromise, timeoutTimer]);
+            const client = new _actions_http_client__WEBPACK_IMPORTED_MODULE_1__/* .HttpClient */ .eN();
+            const startTime = new Date().getTime();
+            while (new Date().getTime() - startTime < timeout) {
+                try {
+                    const response = yield client.request(method, url, null, {});
+                    const status = response.message.statusCode;
+                    if (status === expectedStatus) {
+                        return;
+                    }
+                    else {
+                        yield delay(interval);
+                    }
+                }
+                catch (_a) {
+                    yield delay(interval);
+                }
+            }
+            _actions_core__WEBPACK_IMPORTED_MODULE_0__.setFailed("Waiting exceeded timeout.");
         }
         catch (error) {
             _actions_core__WEBPACK_IMPORTED_MODULE_0__.setFailed(error.message);
