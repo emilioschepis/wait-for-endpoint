@@ -1556,11 +1556,16 @@ function request(url, method, expectedStatus, interval) {
     return __awaiter(this, void 0, void 0, function* () {
         const client = new _actions_http_client__WEBPACK_IMPORTED_MODULE_1__/* .HttpClient */ .eN();
         while (true) {
-            const response = yield client.request(method, url, null, {});
-            const status = response.message.statusCode;
-            if (status === expectedStatus)
-                return;
-            yield delay(interval);
+            try {
+                const response = yield client.request(method, url, null, {});
+                const status = response.message.statusCode;
+                if (status === expectedStatus)
+                    return;
+                yield delay(interval);
+            }
+            catch (_) {
+                continue;
+            }
         }
     });
 }

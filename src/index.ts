@@ -15,12 +15,16 @@ async function request(url: string, method: string, expectedStatus: number, inte
   const client = new http.HttpClient();
 
   while (true) {
-    const response = await client.request(method, url, null, {});
-    const status = response.message.statusCode;
+    try {
+      const response = await client.request(method, url, null, {});
+      const status = response.message.statusCode;
 
-    if (status === expectedStatus) return;
+      if (status === expectedStatus) return;
 
-    await delay(interval);
+      await delay(interval);
+    } catch (_) {
+      continue;
+    }
   }
 }
 
