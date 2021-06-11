@@ -1,0 +1,17 @@
+{
+  "name": "wait-for-endpoint",
+  "private": true,
+  "scripts": {
+    "build": "ncc build src/index.ts"
+  },
+  "dependencies": {
+    "@actions/core": "^1.4.0",
+    "@actions/github": "^5.0.0",
+    "@actions/http-client": "^1.0.11"
+  },
+  "devDependencies": {
+    "@types/node": "^15.12.2",
+    "@vercel/ncc": "^0.28.6",
+    "typescript": "^4.3.2"
+  }
+}

@@ -1,0 +1,29 @@
+name: "Wait For Endpoint"
+description: "A GitHub Action that polls a specified HTTP endpoint until it becomes available."
+author: "Emilio Schepis"
+branding:
+  icon: clock
+  color: orange
+inputs:
+  url:
+    description: The URL to poll
+    required: true
+  method:
+    description: The HTTP method to use
+    required: true
+    default: GET
+  expected-status:
+    description: The HTTP status that is expected
+    required: true
+    default: "200"
+  timeout:
+    description: The maximum time the polling is allowed to run for (in milliseconds)
+    required: true
+    default: "60000"
+  interval:
+    description: The interval at which the polling should happen (in milliseconds)
+    required: true
+    default: "1000"
+runs:
+  using: node12
+  main: dist/index.js
