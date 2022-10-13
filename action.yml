@@ -25,5 +25,5 @@ inputs:
     required: true
     default: "1000"
 runs:
-  using: node12
+  using: node16
   main: dist/index.js
