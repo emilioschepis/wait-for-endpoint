@@ -29,7 +29,7 @@ This action can be particularly useful to check the status of a container launch
 ## Example usage
 
 ```yml
-uses: emilioschepis/wait-for-endpoint@v1.0.2
+uses: emilioschepis/wait-for-endpoint@v1.0.3
 with:
   url: http://localhost:8080
   method: GET
